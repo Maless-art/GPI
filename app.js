@@ -857,6 +857,7 @@ function buildCSV(order){
  return rows
     .map(r=>r.map(csvEscape).join(","))
     .join("\r\n");
+}
 function makeCSVFile(order){
   const text=buildCSV(order);
   return new File([text],`${order.poNumber}.csv`,{type:"text/csv;charset=utf-8"});
