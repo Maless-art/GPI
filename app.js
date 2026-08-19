@@ -854,8 +854,9 @@ function buildCSV(order){
     sageDate(order.date),order.poNumber,100,l.quantity,l.itemId,l.description,l.umId??"", "1.00",
     l.glAccount,Number(l.unitPrice).toFixed(2),l.apAccount,n,(Number(l.quantity)*Number(l.unitPrice)).toFixed(2)
   ]);
-  return [headers,...rows].map(r=>r.map(csvEscape).join(",")).join("\r\n");
-}
+ return rows
+    .map(r=>r.map(csvEscape).join(","))
+    .join("\r\n");
 function makeCSVFile(order){
   const text=buildCSV(order);
   return new File([text],`${order.poNumber}.csv`,{type:"text/csv;charset=utf-8"});
