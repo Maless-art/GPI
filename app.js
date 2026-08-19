@@ -846,19 +846,41 @@ function csvEscape(v){
   return /[",\r\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
 }
 function buildCSV(order){
-  const bad=order.lines.filter(l=>l.glAccount==null || l.unitPrice==null || l.apAccount==null);
-  if(bad.length) throw new Error(`Faltan datos técnicos de Sage en: ${bad.map(x=>x.itemId).join(", ")}`);
-  const headers=["Date","PO #","Vendor ID","Quantity","Item ID","Description","U/M ID","U/M No. of Stocking Units","G/L Account","Unit Price","Accounts Payable Account","Number of Distributions","Amount"];
-  const n=order.lines.length;
-  const rows=order.lines.map(l=>[
-    sageDate(order.date),order.poNumber,100,l.quantity,l.itemId,l.description,l.umId??"", "1.00",
-    l.glAccount,Number(l.unitPrice).toFixed(2),l.apAccount,n,(Number(l.quantity)*Number(l.unitPrice)).toFixed(2)
+
+  const bad = order.lines.filter(
+    l => l.glAccount == null ||
+         l.unitPrice == null ||
+         l.apAccount == null
+  );
+
+  if(bad.length){
+    throw new Error(
+      `Faltan datos técnicos de Sage en: ${bad.map(x => x.itemId).join(", ")}`
+    );
+  }
+
+  const n = order.lines.length;
+
+  const rows = order.lines.map(l => [
+    sageDate(order.date),
+    order.poNumber,
+    100,
+    l.quantity,
+    l.itemId,
+    l.description,
+    l.umId ?? "",
+    "1.00",
+    l.glAccount,
+    Number(l.unitPrice).toFixed(2),
+    l.apAccount,
+    n,
+    (Number(l.quantity) * Number(l.unitPrice)).toFixed(2)
   ]);
- return rows
-    .map(r=>r.map(csvEscape).join(","))
-    .join("\r\n");
-}
-function makeCSVFile(order){
+
+  return rows
+    .map(r => r.map(csvEscape).join(","))
+    .join("\r\n") + "\r\n";
+}function makeCSVFile(order){
   const text=buildCSV(order);
   return new File([text],`${order.poNumber}.csv`,{type:"text/csv;charset=utf-8"});
 }
