@@ -872,20 +872,55 @@ function downloadCSV(order){
   }catch(e){alert(e.message);}
 }
 async function shareCSV(order){
+
   try{
-    if(order.id===currentOrder.id){
-      const err=validateOrder();
-      if(err){ alert(err); return; }
+
+    if(order.id === currentOrder.id){
+      const err = validateOrder();
+
+      if(err){
+        alert(err);
+        return;
+      }
     }
-    const file=makeCSVFile(order);
-    if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({title:order.poNumber,text:`Proforma ${order.poNumber} para importar en Sage.`,files:[file]});
-    }else{
-      downloadCSV(order);
-      alert("Esta tablet/navegador no permite adjuntar archivos con Compartir. Se descargó el CSV para enviarlo manualmente.");
+
+    const file = makeCSVFile(order);
+
+    if(
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ){
+
+      try{
+
+        await navigator.share({
+          title: order.poNumber,
+          text: `Pedido ${order.poNumber}`,
+          files: [file]
+        });
+
+        return;
+
+      }catch(error){
+
+        if(error.name === "AbortError"){
+          return;
+        }
+
+        console.warn(
+          "No se pudo compartir directamente. Se descargará el CSV.",
+          error
+        );
+      }
     }
-  }catch(e){
-    if(e.name!=="AbortError") alert(e.message);
+
+    downloadCSV(order);
+
+  }catch(error){
+
+    alert(error.message);
+
   }
 }
 
