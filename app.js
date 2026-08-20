@@ -963,3 +963,45 @@ function doUndo(){
 }
 
 window.addEventListener("DOMContentLoaded",init);
+
+let deferredInstallPrompt = null;
+
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+
+  console.log("GPI lista para instalar");
+
+  const btn = document.getElementById("installGPI");
+
+  if (btn) {
+    btn.style.display = "inline-block";
+  }
+});
+
+async function instalarGPI() {
+
+  if (!deferredInstallPrompt) {
+    alert("GPI todavía no está disponible para instalación.");
+    return;
+  }
+
+  deferredInstallPrompt.prompt();
+
+  const result = await deferredInstallPrompt.userChoice;
+
+  console.log("Resultado instalación:", result.outcome);
+
+  deferredInstallPrompt = null;
+
+  const btn = document.getElementById("installGPI");
+
+  if (btn) {
+    btn.style.display = "none";
+  }
+}
+
+window.addEventListener("appinstalled", () => {
+  console.log("GPI instalada correctamente");
+  deferredInstallPrompt = null;
+});
