@@ -111,12 +111,13 @@ async function init(){
   renderAll();
   if(("serviceWorker" in navigator) && (location.protocol==="http:" || location.protocol==="https:")){
     navigator.serviceWorker.register("sw.js").catch(()=>{});
-    if(!document.querySelector('link[rel="manifest"]')){
-      const mf=document.createElement("link");
-      mf.rel="manifest";
-      mf.href="manifest.webmanifest";
-      document.head.appendChild(mf);
-    }
+    if (
+  ("serviceWorker" in navigator) &&
+  (location.protocol === "http:" || location.protocol === "https:")
+){
+  navigator.serviceWorker.register("./sw.js")
+    .catch(console.error);
+}
   }
 }
 function prepareNewOrder(){
