@@ -912,30 +912,38 @@ async function shareCSV(order){
     if(
       navigator.share &&
       navigator.canShare &&
-      navigator.canShare({ files: [file] })
+      navigator.canShare({ files:[file] })
     ){
 
-      try {
+      try{
 
-  await navigator.share({
-    files: [file]
-  });
+        await navigator.share({
+          files:[file]
+        });
 
-  return;
+        return;
 
-} catch(error) {
+      }catch(error){
 
-  alert(
-    "ERROR AL COMPARTIR\n\n" +
-    "Nombre: " + error.name +
-    "\nMensaje: " + error.message
-  );
+        if(error.name === "AbortError"){
+          return;
+        }
 
-  return;
-}
+        console.warn(
+          "Compartir no permitido en este dispositivo:",
+          error
+        );
+      }
     }
 
-    alert("La tablet indicó que no puede compartir archivos.");
+    downloadCSV(order);
+
+    alert(
+      "CSV descargado.\n\n" +
+      "IMPORTANTE:\n" +
+      "No abras el archivo en Excel.\n\n" +
+      "Ve a Descargas, mantén presionado el archivo y usa Compartir → Gmail."
+    );
 
   }catch(error){
 
