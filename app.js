@@ -909,11 +909,18 @@ async function shareCSV(order){
 
     const file = makeCSVFile(order);
 
-    if(
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ){
+   alert(
+  "share: " + !!navigator.share +
+  "\ncanShare: " + !!navigator.canShare +
+  "\nfiles: " +
+  (
+    navigator.canShare
+      ? navigator.canShare({ files: [file] })
+      : "no disponible"
+  )
+);
+
+{
 
       try{
 
