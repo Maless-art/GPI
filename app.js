@@ -909,18 +909,11 @@ async function shareCSV(order){
 
     const file = makeCSVFile(order);
 
-   alert(
-  "share: " + !!navigator.share +
-  "\ncanShare: " + !!navigator.canShare +
-  "\nfiles: " +
-  (
-    navigator.canShare
-      ? navigator.canShare({ files: [file] })
-      : "no disponible"
-  )
-);
-
-{
+    if(
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ){
 
       try{
 
@@ -934,18 +927,17 @@ async function shareCSV(order){
 
       }catch(error){
 
-        if(error.name === "AbortError"){
-          return;
-        }
-
-        console.warn(
-          "No se pudo compartir directamente. Se descargará el CSV.",
-          error
+        alert(
+          "ERROR AL COMPARTIR\n\n" +
+          "Nombre: " + error.name +
+          "\nMensaje: " + error.message
         );
+
+        return;
       }
     }
 
-    downloadCSV(order);
+    alert("La tablet indicó que no puede compartir archivos.");
 
   }catch(error){
 
@@ -953,7 +945,6 @@ async function shareCSV(order){
 
   }
 }
-
 function showUndo(text,fn){
   undoAction=fn;showSnack(text,true);
 }
