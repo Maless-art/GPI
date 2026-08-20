@@ -915,26 +915,24 @@ async function shareCSV(order){
       navigator.canShare({ files: [file] })
     ){
 
-      try{
+      try {
 
-        await navigator.share({
-          title: order.poNumber,
-          text: `Pedido ${order.poNumber}`,
-          files: [file]
-        });
+  await navigator.share({
+    files: [file]
+  });
 
-        return;
+  return;
 
-      }catch(error){
+} catch(error) {
 
-        alert(
-          "ERROR AL COMPARTIR\n\n" +
-          "Nombre: " + error.name +
-          "\nMensaje: " + error.message
-        );
+  alert(
+    "ERROR AL COMPARTIR\n\n" +
+    "Nombre: " + error.name +
+    "\nMensaje: " + error.message
+  );
 
-        return;
-      }
+  return;
+}
     }
 
     alert("La tablet indicó que no puede compartir archivos.");
